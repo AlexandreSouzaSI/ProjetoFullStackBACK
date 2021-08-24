@@ -1,5 +1,6 @@
 ###
-POST http://localhost:3000/produto/inserir HTTP/1.1
+POST http://localhost:3000/produtos HTTP/1.1
+Content-Type: application/json
 
 {
     "produto": "Skol",
@@ -10,6 +11,7 @@ POST http://localhost:3000/produto/inserir HTTP/1.1
 
 
 POST http://localhost:3000/usuarios HTTP/1.1
+Content-Type: application/json
 
 {
     "name": "Romeu",
@@ -21,7 +23,18 @@ POST http://localhost:3000/usuarios HTTP/1.1
 
 ###
 
-POST http://localhost:3000/mesa/inserir HTTP/1.1
+POST http://localhost:3000/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "antonio@gmail.com",
+    "senha": "12345"
+}
+
+###
+
+POST http://localhost:3000/mesas HTTP/1.1
+Content-Type: application/json
 
 {
     "numero": 6,
@@ -31,6 +44,7 @@ POST http://localhost:3000/mesa/inserir HTTP/1.1
 ###
 
 POST http://localhost:3000/formapagamento/inserir HTTP/1.1
+Content-Type: application/json
 
 {
     "descrição": "dinheiro",
