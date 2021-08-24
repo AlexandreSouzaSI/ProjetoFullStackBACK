@@ -1,0 +1,20 @@
+
+GET http://localhost:3000/pedidosgeral
+
+###
+
+GET http://localhost:3000/pedidosbebidas
+
+###
+
+GET http://localhost:3000/totalapagar
+
+###
+
+GET http://localhost:3000/totaldodia
+
+###
+
+GET http://localhost:3000/totaproduto
+
+###

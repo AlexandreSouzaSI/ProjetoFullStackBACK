@@ -1,0 +1,57 @@
+
+PUT http://localhost:3000/produtos/7 HTTP/1.1
+Content-Type: application/json
+
+{
+    "produto":"Skol",
+    "preço": 7,
+    "date_update": "now()"
+}
+###
+
+PUT http://localhost:3000/usuarios/7 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Alexandre",
+    "email": "ahdygvdfd@gmail.com",
+    "telefone": "959584152",
+    "date_update": "now()"
+}
+###
+
+PUT http://localhost:3000/mesa/alterar/5 HTTP/1.1
+Content-Type: application/json
+
+{
+    "numero": "10",
+    "date_update": "now()"
+}
+###
+
+PUT http://localhost:3000/formapagamento/alterar/4 HTTP/1.1
+Content-Type: application/json
+
+{
+    "descrição": "dinheiro",
+    "date_update": "now()"
+}
+###
+PUT http://localhost:3000/comanda/alterar/13 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id_usuario_cadastrado": 4,
+    "id_mesa": 4,
+    "id_forma_pagamento": 3,
+    "preço_total": 120,
+}
+###
+PUT http://localhost:3000/itenscomanda/alterar/10 HTTP/1.1
+Content-Type: application/json
+
+{
+    "id_´produto": 2,
+    "quantidade": 10
+}
+###

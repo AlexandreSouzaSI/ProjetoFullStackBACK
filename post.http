@@ -1,0 +1,64 @@
+###
+POST http://localhost:3000/produto/inserir HTTP/1.1
+
+{
+    "produto": "Skol",
+    "preço": 10,
+}
+
+###
+
+
+POST http://localhost:3000/usuarios HTTP/1.1
+
+{
+    "name": "Romeu",
+    "email": "ahdygvdfd@gmail.com",
+    "telefone": "959584152",
+    "senha": "123",
+    "date_create": "now()"
+}
+
+###
+
+POST http://localhost:3000/mesa/inserir HTTP/1.1
+
+{
+    "numero": 6,
+    "date_create": "now()"
+}
+
+###
+
+POST http://localhost:3000/formapagamento/inserir HTTP/1.1
+
+{
+    "descrição": "dinheiro",
+    "date_create": "now()"
+}
+
+###
+
+POST http://localhost:3000/comanda/inserir HTTP/1.1
+
+{
+    "id_usuario_cadastrado": 5,
+    "id_mesa": 2,
+    "id_forma_pagamento": 2,
+    "preço_total": 12,
+    "date_create": "now()"
+}
+
+###
+
+POST http://localhost:3000/itenscomanda/inserir HTTP/1.1
+
+{
+    "name": "Romeu",
+    "email": "ahdygvdfd@gmail.com",
+    "telefone": "959584152",
+    "senha": "123",
+    "date_create": "now()"
+}
+
+###

@@ -1,0 +1,28 @@
+
+
+GET http://localhost:3000/produtos
+
+###
+
+GET http://localhost:3000/usuarios
+
+###
+
+GET http://localhost:3000/mesas
+
+###
+
+
+GET http://localhost:3000/formapagamento
+
+###
+
+
+GET http://localhost:3000/comanda
+
+###
+
+
+GET http://localhost:3000/itenscomanda
+
+###
