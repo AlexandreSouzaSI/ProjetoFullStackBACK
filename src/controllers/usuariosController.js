@@ -2,7 +2,6 @@ const pool = require('../infra/database');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const autorização = require('../auth/jwtauth')
 
 
 const getUsuario = async (req, res) => {
@@ -11,15 +10,15 @@ const getUsuario = async (req, res) => {
 }
 
 const cadastrarUsuario = async (req, res) => {
-    const { name, email, telefone } = req.body;
+    const { name, email, telefone, admin } = req.body;
     const senhaCrypto = await bcrypt.hash(req.body.senha, 10);
-    const response = await pool.query(`INSERT INTO usuarios_cadastrados (name, email, telefone, senha, date_create) 
-    VALUES ($1, $2, $3, $4, $5) returning *`, 
-    [name, email, telefone, senha = senhaCrypto , date_create = new Date()])
+    const response = await pool.query(`INSERT INTO usuarios_cadastrados (name, email, telefone, senha, admin, date_create) 
+    VALUES ($1, $2, $3, $4, $5, $6) returning *`, 
+    [name, email, telefone, senha = senhaCrypto, admin, date_create = new Date()])
     res.status(201).json({
         message: 'Usuario cadastrado com sucesso!',
         body: {
-            usuario: {name, email, telefone, senha, date_create}
+            usuario: {name, email, telefone, senha, admin, date_create}
         }
     })
 };
@@ -53,6 +52,8 @@ const loginUsuario = async (req, res) => {
 }
 
 const deleleUsuario = async (req, res) => {
+    const token = req.cookie['token'];
+    console.log(token)
     const id = parseInt(req.params.id);
     const response = await pool.query('UPDATE usuarios_cadastrados SET date_delete = $1 WHERE id_usuario_cadastrado = $2', [date_delete = new Date(), id]);
     res.status(204).json(`Usuario ${id} deletado com sucesso!`)
