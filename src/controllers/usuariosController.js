@@ -40,7 +40,7 @@ const loginUsuario = async (req, res) => {
                 "admin": false
             }
 
-            token = jwt.sign(usuarioInfo, 'abc123');
+            token = jwt.sign(usuarioInfo, process.env.SECRET);
             console.log(token);
             res.cookie('token', token, { httpOnly: true});
             res.json(response);
