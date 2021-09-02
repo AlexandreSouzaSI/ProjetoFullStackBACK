@@ -1,20 +1,28 @@
 
-GET http://localhost:3000/pedidosgeral
+GET http://localhost:4000/comidas
 
 ###
 
-GET http://localhost:3000/pedidosbebidas
+GET http://localhost:4000/bebidas
 
 ###
 
-GET http://localhost:3000/totalapagar
+GET http://localhost:4000/totaldia
 
 ###
 
-GET http://localhost:3000/totaldodia
+GET http://localhost:4000/totalpagar
 
 ###
 
-GET http://localhost:3000/totaproduto
+POST http://localhost:4000/totalproduto
+
+{
+    "produto": "Skol"
+}
+
+###
+
+POST http://localhost:4000/totalpessoa
 
 ###

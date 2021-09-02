@@ -77,10 +77,30 @@ const getTotalProduto = async (req, res) => {
     res.status(200).json(response.rows);
 };
 
+const getTotalPorPessoa = async (req, res) => {
+    const { id } = req.body;
+    const response = await pool.query(`select 
+                                        SUBSTRING(CAST(comandas2.date_create AS varchar), 1, 10) as data_pedido,
+                                        name,
+                                        produto,
+                                        quantidade,
+                                        preço,
+                                        SUM(quantidade * preço) Total
+                                    from itens_comanda JOIN produtos produtos2 ON produtos2.id_produto = itens_comanda.id_produto
+                                    JOIN comandas comandas2 ON comandas2.id_comanda = itens_comanda.id_comanda
+                                    JOIN usuarios_cadastrados usuarios_cadastrados2 ON usuarios_cadastrados2.id_usuario_cadastrado = comandas2.id_usuario_cadastrado
+                                    WHERE usuarios_cadastrados2.id_usuario_cadastrado = $1
+                                    Group BY name, produto, quantidade, preço, comandas2.date_create`, [id])
+    res.status(200).json(response.rows);
+};
+
+
+
 module.exports = {
     getPedidoComida,
     getPedidoBebida,
     getTotalDia,
     getTotalPagar,
-    getTotalProduto
+    getTotalProduto,
+    getTotalPorPessoa
 }

@@ -2,15 +2,32 @@ const pool = require('../infra/database');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { Pool } = require('pg');
 
 
 const getUsuario = async (req, res) => {
-    const response = await pool.query('SELECT * FROM usuarios_cadastrados WHERE date_delete is null')
-    res.status(200).json(response.rows);
+
+            try {
+                const response = await pool.query('SELECT * FROM usuarios_cadastrados WHERE date_delete is null')
+                res.status(200).json(response.rows);
+                } catch (e) {
+                console.log(e);
+            }
+
 }
 
 const cadastrarUsuario = async (req, res) => {
     const { name, email, telefone, admin } = req.body;
+
+    const compare = await pool.query(`SELECT * FROM usuarios_cadastrados WHERE email = $1`, [email])
+
+
+    if (compare.rowCount === 1) {
+        res.json(0)
+        console.log("Email já cadastrado")
+    } 
+    
+    else if (compare.rowCount === 0) {
     const senhaCrypto = await bcrypt.hash(req.body.senha, 10);
     const response = await pool.query(`INSERT INTO usuarios_cadastrados (name, email, telefone, senha, admin, date_create) 
     VALUES ($1, $2, $3, $4, $5, $6) returning *`, 
@@ -21,16 +38,25 @@ const cadastrarUsuario = async (req, res) => {
             usuario: {name, email, telefone, senha, admin, date_create}
         }
     })
+    }
 };
 
 const loginUsuario = async (req, res) => {
     const { email, senha } = req.body;
+    console.log(email)
+    res.clearCookie('token');
     let token;
+
+    try {
     const response = await pool.query('SELECT id_usuario_cadastrado, email, senha FROM usuarios_cadastrados WHERE email = $1', [email]);
+    console.table(response.rows);
+
+    
+
     const usuarioLogin = response.rows[0].email;
     const senhaLogin = response.rows[0].senha;
-    console.log(response.rows)
-    bcrypt.compare(senha, senhaLogin, function(err, result){
+
+    bcrypt.compare(senha, senhaLogin, function(err, result) {
 
         if(usuarioLogin == email && result == true){
             const idLogin = response.rows[0].id_usuario_cadastrado;
@@ -43,17 +69,20 @@ const loginUsuario = async (req, res) => {
             token = jwt.sign(usuarioInfo, process.env.SECRET);
             console.log(token);
             res.cookie('token', token, { httpOnly: true});
-            res.json(response);
+            res.json(usuarioLogin);
         } else {
             console.log('Usuario ou Senha incorretos');
-            res.send('Usuario ou Senha incorretos');
+            res.json(0);
         }
-    })
+    });
+
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(401);
+    }
 }
 
 const deleleUsuario = async (req, res) => {
-    const token = req.cookie['token'];
-    console.log(token)
     const id = parseInt(req.params.id);
     const response = await pool.query('UPDATE usuarios_cadastrados SET date_delete = $1 WHERE id_usuario_cadastrado = $2', [date_delete = new Date(), id]);
     res.status(204).json(`Usuario ${id} deletado com sucesso!`)
