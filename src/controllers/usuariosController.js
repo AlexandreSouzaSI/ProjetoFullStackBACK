@@ -23,9 +23,9 @@ const cadastrarUsuario = async (req, res) => {
 
 
     if (compare.rowCount === 1) {
-        res.json(0)
         console.log("Email já cadastrado")
-    } 
+        res.json(0)
+    }
     
     else if (compare.rowCount === 0) {
     const senhaCrypto = await bcrypt.hash(req.body.senha, 10);
@@ -47,11 +47,13 @@ const loginUsuario = async (req, res) => {
     res.clearCookie('token');
     let token;
 
-    try {
-    const response = await pool.query('SELECT id_usuario_cadastrado, email, senha FROM usuarios_cadastrados WHERE email = $1', [email]);
-    console.table(response.rows);
-
     
+    const response = await pool.query('SELECT id_usuario_cadastrado, email, senha FROM usuarios_cadastrados WHERE email = $1', [email]);
+
+    if (response.rowCount === 0) {
+        console.log("Email ou senha incorretos")
+        res.json(0)
+    } else {
 
     const usuarioLogin = response.rows[0].email;
     const senhaLogin = response.rows[0].senha;
@@ -71,15 +73,11 @@ const loginUsuario = async (req, res) => {
             res.cookie('token', token, { httpOnly: true});
             res.json(usuarioLogin);
         } else {
-            console.log('Usuario ou Senha incorretos');
-            res.json(0);
-        }
-    });
-
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(401);
-    }
+            console.log("Email ou senha incorretos")
+            res.json(0) 
+        } 
+    });   
+}
 }
 
 const deleleUsuario = async (req, res) => {

@@ -2,6 +2,7 @@ const pool = require('../infra/database');
 
 
 const getProdutos = async (req, res) => {
+    
     const response = await pool.query('SELECT * FROM produtos WHERE date_delete is null')
     res.status(200).json(response.rows);
 }
