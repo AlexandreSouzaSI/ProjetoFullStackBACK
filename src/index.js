@@ -18,6 +18,7 @@ app.use(require('./routes/formaPagamentoRouter'));
 app.use(require('./routes/comandaRouter'));
 app.use(require('./routes/itensComandaRouter'));
 app.use(require('./routes/relatorioRouter'));
+app.use(require('./routes/validacaoRouter'));
 
 app.listen(4000);
 console.log('Server on port 4000')

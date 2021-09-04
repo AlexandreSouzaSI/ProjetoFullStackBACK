@@ -8,7 +8,7 @@ const getItensComanda = async (req, res) => {
 
 const cadastrarItensComanda = async (req, res) => {
     const { id_comanda, id_produto, quantidade } = req.body;
-    const response = await pool.query(`INSERT INTO itens_comanda (id_comanda, id_produto, quantidade , date_create) 
+    const response = await pool.query(`INSERT INTO itens_comanda (id_comanda, id_produto, quantidade, date_create) 
     VALUES ($1, $2, $3, $4) returning *`, 
     [id_comanda, id_produto, quantidade, date_create = new Date()])
     res.status(201).json({

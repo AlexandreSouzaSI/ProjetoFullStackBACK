@@ -1,10 +1,36 @@
 const pool = require('../infra/database');
+const jwt = require('jsonwebtoken');
 
 
 const getProdutos = async (req, res) => {
-    
-    const response = await pool.query('SELECT * FROM produtos WHERE date_delete is null')
-    res.status(200).json(response.rows);
+
+    const token = req.cookies['token']
+
+    console.log(token)
+
+    console.log('get', token);
+    jwt.verify(token, process.env.SECRET, async (err, tokenUsuario) => {
+
+        if (err) {
+            return res.sendStatus(403);
+        } else {
+            userEmail = tokenUsuario.email;
+            userId = tokenUsuario.id;
+            userAdmin = tokenUsuario.admin;
+
+            try {
+
+                const response = await pool.query('SELECT * FROM produtos WHERE date_delete is null')
+                console.log(userEmail, userId, userAdmin);
+                res.status(200).json(response.rows);
+
+            } catch (e) {
+                console.log(e);
+            }
+
+            return true;
+        }
+    })
 }
 
 const cadastrarProduto = async (req, res) => {

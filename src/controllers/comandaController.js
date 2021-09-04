@@ -1,4 +1,5 @@
 const pool = require('../infra/database');
+const jwt = require('jsonwebtoken');
 
 
 
@@ -7,18 +8,52 @@ const getComanda = async (req, res) => {
     res.status(200).json(response.rows);
 }
 
+const getComandaUsuario = async (req, res) => {
+    const {id_usuario_cadastrado} = req.body;
+    const response = await pool.query(`select 
+                                            usuarios_cadastrados.id_usuario_cadastrado,
+                                            name,
+                                            numero,
+                                            produto,
+                                            SUM(quantidade * preço) preço_total,
+                                            quantidade,
+                                            descrição,
+                                            preço
+                                        from comandas join forma_pagamento ON forma_pagamento.id_forma_pagamento = comandas.id_forma_pagamento
+                                        join itens_comanda ON itens_comanda.id_comanda = comandas.id_comanda
+                                        join produtos ON produtos.id_produto = itens_comanda.id_produto
+                                        join mesas ON mesas.id_mesa = comandas.id_mesa
+                                        join usuarios_cadastrados ON usuarios_cadastrados.id_usuario_cadastrado = comandas.id_usuario_cadastrado
+                                        WHERE usuarios_cadastrados.id_usuario_cadastrado = $1
+                                        GROUP BY usuarios_cadastrados.id_usuario_cadastrado, name, numero, produto, preço_total, quantidade, descrição, preço`, [id_usuario_cadastrado])
+    console.log(response.rows)
+    res.status(200).json(response.rows);
+}
+
 const cadastrarComanda = async (req, res) => {
-    const { id_usuario, id_mesa, id_forma_pagamento, preço_total, taxa_serviço, status_pagamento } = req.body;
-    const response = await pool.query(`INSERT INTO comandas (id_usuario, id_mesa, id_forma_pagamento, preço_total, taxa_serviço, status_pagamento, date_create) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7) returning *`, 
-    [id_usuario, id_mesa, id_forma_pagamento, preço_total, taxa_serviço, status_pagamento , date_create = new Date()])
-    res.status(201).json({
+    const { id_mesa, id_usuario_cadastrado } = req.body;
+    let tokenm;
+    const response = await pool.query(`INSERT INTO comandas (id_mesa, id_usuario_cadastrado, date_create) 
+    VALUES ($1, $2, $3) returning *`, 
+    [id_mesa, id_usuario_cadastrado, date_create = new Date()])
+
+        const id_mesas = response.rows[0].id_mesa
+        const comanda = response.rows[0].id_comanda
+                    const usuarioInfoMesa = {
+                        "id_mesa": id_mesas,
+                        "id_comanda": comanda
+                    }
+
+                    tokenm = jwt.sign(usuarioInfoMesa, process.env.SECRET);
+                    console.log(tokenm);
+                    res.cookie('tokenm', tokenm, { httpOnly: true});
+                    res.status(201).json({
         message: 'Comanda cadastrado com sucesso!',
         body: {
-            Comanda: {id_usuario, id_mesa, id_forma_pagamento, preço_total, taxa_serviço, status_pagamento, date_create}
+            Comanda: {id_mesa, id_usuario_cadastrado, date_create}
         }
     })
-};
+};1
 
 const deleleComanda = async (req, res) => {
     const id = parseInt(req.params.id);
@@ -40,5 +75,6 @@ module.exports = {
     getComanda,
     cadastrarComanda,
     deleleComanda,
-    alterarComanda
+    alterarComanda,
+    getComandaUsuario
 }

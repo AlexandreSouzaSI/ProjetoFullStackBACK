@@ -22,7 +22,7 @@ const cadastrarUsuario = async (req, res) => {
     const compare = await pool.query(`SELECT * FROM usuarios_cadastrados WHERE email = $1`, [email])
 
 
-    if (compare.rowCount === 1) {
+    if (compare.rowCount === 1 || compare.rowCount > 1) {
         console.log("Email já cadastrado")
         res.json(0)
     }
@@ -48,7 +48,7 @@ const loginUsuario = async (req, res) => {
     let token;
 
     
-    const response = await pool.query('SELECT id_usuario_cadastrado, email, senha FROM usuarios_cadastrados WHERE email = $1', [email]);
+    const response = await pool.query('SELECT id_usuario_cadastrado, email, senha, name, telefone FROM usuarios_cadastrados WHERE email = $1', [email]);
 
     if (response.rowCount === 0) {
         console.log("Email ou senha incorretos")
@@ -62,7 +62,11 @@ const loginUsuario = async (req, res) => {
 
         if(usuarioLogin == email && result == true){
             const idLogin = response.rows[0].id_usuario_cadastrado;
+            const NomeUser = response.rows[0].name;
+            const NomeTel = response.rows[0].telefone;
             const usuarioInfo = {
+                "telefone": NomeTel,
+                "name": NomeUser,
                 "email": usuarioLogin,
                 "id": idLogin,
                 "admin": false
@@ -101,5 +105,5 @@ module.exports = {
     cadastrarUsuario,
     deleleUsuario,
     alterarUsuario,
-    loginUsuario
+    loginUsuario,
 }

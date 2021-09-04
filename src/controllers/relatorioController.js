@@ -94,7 +94,48 @@ const getTotalPorPessoa = async (req, res) => {
     res.status(200).json(response.rows);
 };
 
+const getRelarorioPessoa = async (req, res) => {
+    const { id_usuario_cadastrado } = req.body;
+    const response = await pool.query(`select 
+                                        name,
+                                        numero,
+                                        SUM(quantidade * preço) preço_total,
+                                        produto,
+                                        preço,
+                                        SUM(quantidade) quantidade
+                                    FROM usuarios_cadastrados
+                                    JOIN comandas comandas2 ON comandas2.id_usuario_cadastrado = usuarios_cadastrados.id_usuario_cadastrado
+                                    JOIN mesas mesas2 ON mesas2.id_mesa = comandas2.id_mesa
+                                    JOIN itens_comanda ON itens_comanda.id_comanda = comandas2.id_comanda
+                                    JOIN produtos ON produtos.id_produto = itens_comanda.id_produto WHERE usuarios_cadastrados.id_usuario_cadastrado = $1
+                                    GROUP BY name, numero, produto, preço, quantidade`, [id_usuario_cadastrado])
+    res.status(200).json(response.rows);
+};
 
+const getRelarorioPreco = async (req, res) => {
+    const { id_usuario_cadastrado } = req.body;
+    const response = await pool.query(`select 
+                                            name,
+                                            SUM(preço_total) as total
+                                        from (
+                                        select 
+                                            name,
+                                            numero,
+                                            SUM(quantidade * preço) preço_total,
+                                            SUM(preço_total),
+                                            produto,
+                                            preço,
+                                            SUM(quantidade) quantidade
+                                        FROM usuarios_cadastrados
+                                        JOIN comandas comandas2 ON comandas2.id_usuario_cadastrado = usuarios_cadastrados.id_usuario_cadastrado
+                                        JOIN mesas mesas2 ON mesas2.id_mesa = comandas2.id_mesa
+                                        JOIN itens_comanda ON itens_comanda.id_comanda = comandas2.id_comanda
+                                        JOIN produtos ON produtos.id_produto = itens_comanda.id_produto WHERE usuarios_cadastrados.id_usuario_cadastrado = $1
+                                        GROUP BY name, numero, produto, preço
+                                            ) as Soma
+                                            GROUP BY name`, [id_usuario_cadastrado])
+    res.status(200).json(response.rows);
+};
 
 module.exports = {
     getPedidoComida,
@@ -102,5 +143,7 @@ module.exports = {
     getTotalDia,
     getTotalPagar,
     getTotalProduto,
-    getTotalPorPessoa
+    getTotalPorPessoa,
+    getRelarorioPessoa,
+    getRelarorioPreco
 }
