@@ -22,6 +22,7 @@ const getProdutos = async (req, res) => {
 
                 const response = await pool.query('SELECT * FROM produtos WHERE date_delete is null')
                 console.log(userEmail, userId, userAdmin);
+                console.log(response.rows)
                 res.status(200).json(response.rows);
 
             } catch (e) {
@@ -34,13 +35,13 @@ const getProdutos = async (req, res) => {
 }
 
 const cadastrarProduto = async (req, res) => {
-    const { produto, preço } = req.body;
-    const response = await pool.query(`INSERT INTO produtos (produto, preço, date_create) VALUES ($1, $2, $3) returning *`, 
-    [produto, preço, date_create = new Date()])
+    const { produto, preco } = req.body;
+    const response = await pool.query(`INSERT INTO produtos (produto, preco, date_create) VALUES ($1, $2, $3) returning *`, 
+    [produto, preco, date_create = new Date()])
     res.status(201).json({
         message: 'Produto cadastrado com sucesso!',
         body: {
-            produto: {produto, preço, date_create}
+            produto: {produto, preco, date_create}
         }
     })
 };
@@ -53,10 +54,10 @@ const deleleProduto = async (req, res) => {
 
 const alterarProduto = async (req, res) => {
     const id = parseInt(req.params.id);
-    const { produto, preço } = req.body;
+    const { produto, preco } = req.body;
     const response = await pool.query(`UPDATE produtos 
-    SET produto = $1, preço = $2, date_update = $3 where id_produto = $4 returning *`, 
-    [produto, preço, date_update = new Date(), id])
+    SET produto = $1, preco = $2, date_update = $3 where id_produto = $4 returning *`, 
+    [produto, preco, date_update = new Date(), id])
     res.status(204).json(response)
 };
 

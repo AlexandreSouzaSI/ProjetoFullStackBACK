@@ -15,17 +15,17 @@ const getComandaUsuario = async (req, res) => {
                                             name,
                                             numero,
                                             produto,
-                                            SUM(quantidade * preço) preço_total,
+                                            SUM(quantidade * preco) preco_total,
                                             quantidade,
-                                            descrição,
-                                            preço
+                                            descricao,
+                                            preco
                                         from comandas join forma_pagamento ON forma_pagamento.id_forma_pagamento = comandas.id_forma_pagamento
                                         join itens_comanda ON itens_comanda.id_comanda = comandas.id_comanda
                                         join produtos ON produtos.id_produto = itens_comanda.id_produto
                                         join mesas ON mesas.id_mesa = comandas.id_mesa
                                         join usuarios_cadastrados ON usuarios_cadastrados.id_usuario_cadastrado = comandas.id_usuario_cadastrado
                                         WHERE usuarios_cadastrados.id_usuario_cadastrado = $1
-                                        GROUP BY usuarios_cadastrados.id_usuario_cadastrado, name, numero, produto, preço_total, quantidade, descrição, preço`, [id_usuario_cadastrado])
+                                        GROUP BY usuarios_cadastrados.id_usuario_cadastrado, name, numero, produto, preco_total, quantidade, descricao, preco`, [id_usuario_cadastrado])
     console.log(response.rows)
     res.status(200).json(response.rows);
 }
@@ -63,10 +63,10 @@ const deleleComanda = async (req, res) => {
 
 const alterarComanda = async (req, res) => {
     const id = parseInt(req.params.id);
-    const { id_usuario, id_mesa, id_forma_pagamento, preço_total, taxa_serviço, status_pagamento } = req.body;
+    const { id_usuario, id_mesa, id_forma_pagamento, preco_total, taxa_servico, status_pagamento } = req.body;
     const response = await pool.query(`UPDATE comandas 
-    SET id_usuario = $1, id_mesa = $2, id_forma_pagamento = $3, preço_total = $4, taxa_serviço = $5, status_pagamento = $6, date_update = $7 where id_comanda = $8 returning *`, 
-    [id_usuario, id_mesa, id_forma_pagamento, preço_total, taxa_serviço, status_pagamento, date_update = new Date(), id])
+    SET id_usuario = $1, id_mesa = $2, id_forma_pagamento = $3, preco_total = $4, taxa_servico = $5, status_pagamento = $6, date_update = $7 where id_comanda = $8 returning *`, 
+    [id_usuario, id_mesa, id_forma_pagamento, preco_total, taxa_servico, status_pagamento, date_update = new Date(), id])
     res.status(204).json(response)
 };
 
